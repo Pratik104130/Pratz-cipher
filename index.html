@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pratik Cipher v4</title>
+
+<style>
+
+body{
+background:black;
+color:#00ff88;
+font-family:monospace;
+text-align:center;
+padding:20px;
+}
+
+h2{
+text-shadow:0 0 10px #00ff88;
+}
+
+textarea{
+
+width:95%;
+max-width:420px;
+height:100px;
+padding:10px;
+border-radius:10px;
+border:1px solid #00ff88;
+background:black;
+color:#00ff88;
+font-size:18px;
+text-transform:uppercase;
+
+}
+
+button{
+
+padding:12px 16px;
+margin:6px;
+border:1px solid #00ff88;
+background:black;
+color:#00ff88;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+
+}
+
+button:hover{
+
+background:#00ff88;
+color:black;
+box-shadow:0 0 10px #00ff88;
+
+}
+
+#output{
+
+margin-top:20px;
+font-size:22px;
+background:#001a0f;
+padding:15px;
+border-radius:10px;
+word-wrap:break-word;
+min-height:40px;
+
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>PRATZ CIPHER v4</h2>
+
+<textarea id="input" placeholder="ENTER TEXT"></textarea>
+
+<br>
+
+
+<button onclick="decode()">DECODE</button>
+
+<button onclick="copyText()">COPY</button>
+
+<div id="output"></div>
+<p>Made By Pratik </p>
+<script>
+
+/* AUTO CAPITAL */
+document.getElementById("input").addEventListener("input",function(){
+
+this.value=this.value.toUpperCase();
+
+});
+
+/* LETTER SHIFT */
+
+function shiftForward(c){
+
+let code=c.charCodeAt(0)+2;
+
+if(code>90)
+code=64+(code-90);
+
+return String.fromCharCode(code);
+
+}
+
+function shiftBack(c){
+
+let code=c.charCodeAt(0)-2;
+
+if(code<65)
+code=91-(65-code);
+
+return String.fromCharCode(code);
+
+}
+
+/* NUMBER SHIFT */
+
+function numForward(n){
+
+return (parseInt(n)+2)%10;
+
+}
+
+function numBack(n){
+
+let x=parseInt(n)-2;
+
+if(x<0)
+x=10+x;
+
+return x;
+
+}
+
+/* ENCODE */
+
+function encode(){
+
+let text=document.getElementById("input").value;
+
+let result="";
+let buffer="";
+let mode="";
+
+for(let char of text){
+
+if(char>='A' && char<='Z'){
+
+if(mode!="P" && buffer!=""){
+
+result+=mode+buffer+"9 ";
+buffer="";
+
+}
+
+mode="P";
+
+buffer+=shiftForward(char);
+
+}
+
+else if(char>='0' && char<='9'){
+
+if(mode!="N" && buffer!=""){
+
+result+=mode+buffer+"9 ";
+buffer="";
+
+}
+
+mode="N";
+
+buffer+=numForward(char);
+
+}
+
+else if(char===" "){
+
+if(buffer!=""){
+
+result+=mode+buffer+"9 ";
+buffer="";
+}
+
+result+="/ ";
+
+mode="";
+
+}
+
+}
+
+if(buffer!=""){
+
+result+=mode+buffer+"9";
+
+}
+
+document.getElementById("output").innerText=result.trim();
+
+}
+
+/* DECODE */
+
+function decode(){
+
+let parts=
+document.getElementById("input").value.split(" ");
+
+let result="";
+
+for(let part of parts){
+
+if(part==="/"){
+
+result+=" ";
+continue;
+
+}
+
+if(part.startsWith("P") && part.endsWith("9")){
+
+let clean=part.slice(1,-1);
+
+for(let c of clean){
+
+result+=shiftBack(c);
+
+}
+
+}
+
+else if(part.startsWith("N") && part.endsWith("9")){
+
+let clean=part.slice(1,-1);
+
+for(let n of clean){
+
+result+=numBack(n);
+
+}
+
+}
+
+}
+
+document.getElementById("output").innerText=result;
+
+}
+/* COPY */
+
+function copyText(){
+
+let text=document.getElementById("output").innerText;
+
+if(text!=""){
+
+navigator.clipboard.writeText(text);
+
+alert("Copied");
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
